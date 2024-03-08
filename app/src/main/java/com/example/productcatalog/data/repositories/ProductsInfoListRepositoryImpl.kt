@@ -21,6 +21,11 @@ class ProductsInfoListRepositoryImpl : ProductsInfoListRepository {
         return apiService.getProducts(skip = skip, LIMIT_PRODUCTS_QUERY)
     }
 
+    override fun getCategories(): Single<List<String>> {
+        return apiService.getCategories()
+
+    }
+
     companion object {
         private const val LIMIT_PRODUCTS_QUERY = 20
     }

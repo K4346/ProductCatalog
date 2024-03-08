@@ -5,4 +5,5 @@ import io.reactivex.Single
 
 interface ProductsInfoListRepository {
     fun getProductsList(page: Int): Single<ProductsListEntity>
+    fun getCategories(): Single<List<String>>
 }

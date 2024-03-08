@@ -39,14 +39,15 @@ class ProductDetailFragment : Fragment() {
     private fun initViews() {
         val bundle: Bundle = arguments ?: return
 
-        with(binding){
-            tvTitle.text =  bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_TITLE_KEY)
-            tvDescription.text =  bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_DESCRIPTION_KEY)
-            tvBrand.text =  bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_BRAND_KEY)
-            tvCategory.text =  bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_CATEGORY_KEY)
-            tvPrice.text =  bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_PRICE_KEY)
+        with(binding) {
+            tvTitle.text = bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_TITLE_KEY)
+            tvDescription.text =
+                bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_DESCRIPTION_KEY)
+            tvBrand.text = bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_BRAND_KEY)
+            tvCategory.text = bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_CATEGORY_KEY)
+            tvPrice.text = bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_PRICE_KEY)
             val rating = bundle.getDouble(ProductsListViewModel.PRODUCT_BUNDLE_RATING_KEY)
-        Log.i("kpop",rating.toString())
+            Log.i("kpop", rating.toString())
             ratingBar.rating = rating.toFloat()
         }
         val images = bundle.getStringArrayList(ProductsListViewModel.PRODUCT_BUNDLE_IMAGES_KEY)

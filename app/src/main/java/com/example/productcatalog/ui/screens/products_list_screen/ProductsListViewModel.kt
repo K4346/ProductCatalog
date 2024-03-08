@@ -19,7 +19,9 @@ class ProductsListViewModel(application: Application) : AndroidViewModel(applica
 
     val productsMLE: MutableLiveData<List<ProductInfoEntity>>
 
-    val navigateToDetailSLE = SingleLiveEvent<String>()
+    val categoriesMLE: MutableLiveData<List<String>>
+
+    val showError: SingleLiveEvent<Unit>
 
     private var productsListPage = 1
 
@@ -28,13 +30,20 @@ class ProductsListViewModel(application: Application) : AndroidViewModel(applica
 
         productsMLE = productsListUseCases.productsMLE
 
+        categoriesMLE = productsListUseCases.categoriesMLE
+
+        showError = productsListUseCases.showError
+
         productsListUseCases.updateProductsList(productsListPage)
+
+        productsListUseCases.initCategories(application)
     }
 
-    fun getNewProducts(){
+    fun getNewProducts() {
         productsListPage++
         productsListUseCases.updateProductsList(productsListPage)
     }
+
     override fun onCleared() {
         super.onCleared()
         productsListUseCases.dispose()
@@ -53,7 +62,7 @@ class ProductsListViewModel(application: Application) : AndroidViewModel(applica
         )
     }
 
-    companion object{
+    companion object {
         const val PRODUCT_BUNDLE_IMAGES_KEY = "PRODUCT_BUNDLE_IMAGES_KEY"
         const val PRODUCT_BUNDLE_TITLE_KEY = "PRODUCT_BUNDLE_TITLE_KEY"
         const val PRODUCT_BUNDLE_DESCRIPTION_KEY = "PRODUCT_BUNDLE_DESCRIPTION_KEY"

@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
-import coil.transform.CircleCropTransformation
 import com.example.productcatalog.databinding.ImageSliderItemBinding
 
 class ImagesSliderAdapter(private val imageUrls: List<String>) :
@@ -22,7 +21,7 @@ class ImagesSliderAdapter(private val imageUrls: List<String>) :
         holder.ivPhoto.load(imageUrls[position]) {
             crossfade(true)
 //                placeholder(R.drawable.image)
-                 //transformations(CircleCropTransformation())
+            //transformations(CircleCropTransformation())
         }
     }
 
