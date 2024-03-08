@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ProductCatalog</string>
+    <string name="product_price">%1$s$</string>
+</resources>
