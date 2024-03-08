@@ -14,14 +14,15 @@ interface ApiService {
     ): Single<ProductsListEntity>
 
     @GET(value = "products/search")
-    fun getProductsByTitle(
+    fun getProductsBySearched(
+        @Query("q") searchedText: String,
         @Query("skip") skip: Int,
         @Query("limit") limit: Int
     ): Single<ProductsListEntity>
 
     @GET(value = "products/category/{category}")
     fun getProductsByCategory(
-        @Path("category") id: String,
+        @Path("category") category: String,
         @Query("skip") skip: Int,
         @Query("limit") limit: Int
     ): Single<ProductsListEntity>

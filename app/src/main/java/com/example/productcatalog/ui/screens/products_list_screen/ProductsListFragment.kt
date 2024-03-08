@@ -6,6 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.SearchView
+import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -40,6 +42,24 @@ class ProductsListFragment : Fragment() {
         initObservers()
 
         initRecyclerView()
+
+        initSearchListener()
+    }
+
+    private fun initSearchListener() {
+        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(p0: String?): Boolean {
+
+                return false
+            }
+
+            override fun onQueryTextChange(p0: String?): Boolean {
+                binding.spinnerCategories.isInvisible = p0?.isNotEmpty() == true
+                if (p0?.isEmpty() == true) binding.searchView.clearFocus()
+                if (p0 != null) viewModel.onUpdatedSearchText(p0)
+                return true
+            }
+        })
     }
 
     private fun initRecyclerView() {
@@ -59,15 +79,16 @@ class ProductsListFragment : Fragment() {
         categoryAdapter = spinnerAdapterMake(categories)
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.spinnerCategories.adapter = categoryAdapter
-        binding.spinnerCategories.setSelection(0, false)
+        binding.spinnerCategories.setSelection(viewModel.currentCategoryPosition, true)
         binding.spinnerCategories.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                    // catsListViewModel.breedChoose = catsListViewModel.idsCats[p2]
+                    binding.searchView.isInvisible = p2 != 0
+
+                    viewModel.changeCategory(p2)
                 }
 
                 override fun onNothingSelected(p0: AdapterView<*>?) {
-                    //   catsListViewModel.breedChoose = ""
                 }
             }
     }
@@ -89,7 +110,7 @@ class ProductsListFragment : Fragment() {
     }
 
     private fun productsOver() {
-        viewModel.getNewProducts()
+        viewModel.getNewProducts(clearFlag = false)
     }
 
     private fun initObservers() {
@@ -108,12 +129,12 @@ class ProductsListFragment : Fragment() {
     private fun showContent(flag: Boolean) {
         binding.progressBar.isVisible = !flag
         binding.tvError.isVisible = !flag
-        binding.contentContainer.isVisible = flag
+        binding.rvProductsList.isVisible = flag
     }
 
     private fun showError(flag: Boolean) {
         binding.progressBar.isVisible = !flag
         binding.tvError.isVisible = flag
-        binding.contentContainer.isVisible = !flag
+        binding.rvProductsList.isVisible = !flag
     }
 }

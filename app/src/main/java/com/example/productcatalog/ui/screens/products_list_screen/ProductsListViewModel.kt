@@ -8,6 +8,10 @@ import androidx.lifecycle.MutableLiveData
 import com.example.productcatalog.App
 import com.example.productcatalog.SingleLiveEvent
 import com.example.productcatalog.domain.entities.ProductInfoEntity
+import com.example.productcatalog.domain.entities.ProductsAboutInfoEntity
+import com.example.productcatalog.domain.entities.ProductsShowType.Category
+import com.example.productcatalog.domain.entities.ProductsShowType.Normal
+import com.example.productcatalog.domain.entities.ProductsShowType.Search
 import com.example.productcatalog.domain.use_cases.ProductsListUseCases
 import javax.inject.Inject
 
@@ -25,6 +29,12 @@ class ProductsListViewModel(application: Application) : AndroidViewModel(applica
 
     private var productsListPage = 1
 
+    var currentCategoryPosition = 0
+
+    private var currentProductsShowType = Normal
+
+    private var currentSearchText = ""
+
     init {
         (application as App).component.inject(this)
 
@@ -34,14 +44,32 @@ class ProductsListViewModel(application: Application) : AndroidViewModel(applica
 
         showError = productsListUseCases.showError
 
-        productsListUseCases.updateProductsList(productsListPage)
+        productsListUseCases.updateProductsList(
+            productsListPage,
+            true,
+            ProductsAboutInfoEntity(Normal, null)
+        )
 
         productsListUseCases.initCategories(application)
     }
 
-    fun getNewProducts() {
+    fun getNewProducts(clearFlag: Boolean) {
         productsListPage++
-        productsListUseCases.updateProductsList(productsListPage)
+        val productsAboutInfo = when (currentProductsShowType) {
+            Normal -> ProductsAboutInfoEntity(Normal, null)
+
+            Search -> ProductsAboutInfoEntity(Search, currentSearchText)
+
+            Category -> ProductsAboutInfoEntity(
+                Category,
+                categoriesMLE.value?.get(currentCategoryPosition)
+            )
+        }
+        productsListUseCases.updateProductsList(
+            productsListPage,
+            clearFlag,
+            productsAboutInfo
+        )
     }
 
     override fun onCleared() {
@@ -60,6 +88,32 @@ class ProductsListViewModel(application: Application) : AndroidViewModel(applica
             PRODUCT_BUNDLE_RATING_KEY to product.rating,
             PRODUCT_BUNDLE_PRICE_KEY to product.price,
         )
+    }
+
+    fun changeCategory(position: Int) {
+        if (position == currentCategoryPosition) return
+        currentCategoryPosition = position
+        productsListPage = 0
+        currentProductsShowType = if (position == 0) {
+            Normal
+        } else {
+            Category
+        }
+
+        getNewProducts(clearFlag = true)
+    }
+
+    fun onUpdatedSearchText(text: String) {
+        if (currentSearchText == text) return
+        currentSearchText = text
+        productsListPage = 0
+        currentProductsShowType = if (text.isBlank()) {
+            Normal
+        } else {
+            Search
+        }
+
+        getNewProducts(clearFlag = true)
     }
 
     companion object {

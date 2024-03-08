@@ -6,6 +6,10 @@ import com.example.productcatalog.App
 import com.example.productcatalog.R
 import com.example.productcatalog.SingleLiveEvent
 import com.example.productcatalog.domain.entities.ProductInfoEntity
+import com.example.productcatalog.domain.entities.ProductsAboutInfoEntity
+import com.example.productcatalog.domain.entities.ProductsShowType.Category
+import com.example.productcatalog.domain.entities.ProductsShowType.Normal
+import com.example.productcatalog.domain.entities.ProductsShowType.Search
 import com.example.productcatalog.domain.repositories.ProductsInfoListRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -13,7 +17,11 @@ import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 interface ProductsListUseCases {
-    fun updateProductsList(page: Int)
+    fun updateProductsList(
+        page: Int,
+        clearOldProductsFlag: Boolean,
+        productsAboutInfo: ProductsAboutInfoEntity
+    )
 
     fun initCategories(context: Context)
 
@@ -43,14 +51,35 @@ class ProductsListUseCasesImpl : ProductsListUseCases {
         App().component.inject(this)
     }
 
-    override fun updateProductsList(page: Int) {
-        val disposable = repository.getProductsList(page)
+    override fun updateProductsList(
+        page: Int,
+        clearOldProductsFlag: Boolean,
+        productsAboutInfo: ProductsAboutInfoEntity
+    ) {
+        val observable = when (productsAboutInfo.productsShowType) {
+            Normal -> repository.getProductsList(page)
+            Search -> repository.getProductsListBySearchedText(
+                page,
+                productsAboutInfo.dataForRequest ?: ""
+            )
+
+            Category -> repository.getProductsListByCategory(
+                page,
+                category = productsAboutInfo.dataForRequest ?: ""
+            )
+        }
+
+        val disposable = observable
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
-                val list = arrayListOf<ProductInfoEntity>()
-                productsMLE.value?.let { it1 -> list.addAll(it1) }
-                list.addAll(it.products)
-                productsMLE.value = list
+                if (clearOldProductsFlag) {
+                    productsMLE.value = it.products
+                } else {
+                    val list = arrayListOf<ProductInfoEntity>()
+                    productsMLE.value?.let { it1 -> list.addAll(it1) }
+                    list.addAll(it.products)
+                    productsMLE.value = list
+                }
             }, {
                 showError.call()
             })

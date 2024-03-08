@@ -15,16 +15,47 @@ class ProductsInfoListRepositoryImpl : ProductsInfoListRepository {
         App().component.inject(this)
     }
 
-    override fun getProductsList(page: Int): Single<ProductsListEntity> {
+    override fun getProductsList(
+        page: Int,
+    ): Single<ProductsListEntity> {
 //        NOTE: Начинаем с единицы
         val skip = (page - 1) * LIMIT_PRODUCTS_QUERY
-        return apiService.getProducts(skip = skip, LIMIT_PRODUCTS_QUERY)
+        return apiService.getProducts(skip = skip, limit = LIMIT_PRODUCTS_QUERY)
+
+
+    }
+
+    override fun getProductsListByCategory(
+        page: Int,
+        category: String
+    ): Single<ProductsListEntity> {
+        val skip = (page - 1) * LIMIT_PRODUCTS_QUERY
+        return apiService.getProductsByCategory(
+            category = category ?: "",
+            skip = skip,
+            limit = LIMIT_PRODUCTS_QUERY
+        )
+
+
+    }
+
+    override fun getProductsListBySearchedText(
+        page: Int,
+        searched: String
+    ): Single<ProductsListEntity> {
+        val skip = (page - 1) * LIMIT_PRODUCTS_QUERY
+        return apiService.getProductsBySearched(
+            searchedText = searched,
+            skip = skip,
+            limit = LIMIT_PRODUCTS_QUERY
+        )
     }
 
     override fun getCategories(): Single<List<String>> {
         return apiService.getCategories()
 
     }
+
 
     companion object {
         private const val LIMIT_PRODUCTS_QUERY = 20
