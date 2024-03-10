@@ -9,13 +9,14 @@ import com.example.productcatalog.App
 import com.example.productcatalog.SingleLiveEvent
 import com.example.productcatalog.domain.entities.ProductInfoEntity
 import com.example.productcatalog.domain.entities.ProductsAboutInfoEntity
+import com.example.productcatalog.domain.entities.ProductsShowType
 import com.example.productcatalog.domain.entities.ProductsShowType.Category
 import com.example.productcatalog.domain.entities.ProductsShowType.Normal
 import com.example.productcatalog.domain.entities.ProductsShowType.Search
 import com.example.productcatalog.domain.use_cases.ProductsListUseCases
 import javax.inject.Inject
 
-class ProductsListViewModel(application: Application) : AndroidViewModel(application) {
+class ProductsListViewModel(private val application: Application) : AndroidViewModel(application) {
 
     @Inject
     lateinit var productsListUseCases: ProductsListUseCases
@@ -27,11 +28,11 @@ class ProductsListViewModel(application: Application) : AndroidViewModel(applica
 
     val showError: SingleLiveEvent<Unit>
 
+    val currentProductsShowTypeMLE = MutableLiveData<ProductsShowType>()
+
     private var productsListPage = 1
 
     var currentCategoryPosition = 0
-
-    private var currentProductsShowType = Normal
 
     private var currentSearchText = ""
 
@@ -44,26 +45,36 @@ class ProductsListViewModel(application: Application) : AndroidViewModel(applica
 
         showError = productsListUseCases.showError
 
+        currentProductsShowTypeMLE.value = Normal
+
+        getNewProducts(false)
         productsListUseCases.updateProductsList(
             productsListPage,
             true,
             ProductsAboutInfoEntity(Normal, null)
         )
 
-        productsListUseCases.initCategories(application)
+
     }
 
     fun getNewProducts(clearFlag: Boolean) {
-        productsListPage++
-        val productsAboutInfo = when (currentProductsShowType) {
-            Normal -> ProductsAboutInfoEntity(Normal, null)
+        if (clearFlag) productsListPage = 1 else productsListPage++
 
+        if (categoriesMLE.value == null) {
+            productsListUseCases.initCategories(application)
+        }
+
+        val productsAboutInfo = when (currentProductsShowTypeMLE.value) {
             Search -> ProductsAboutInfoEntity(Search, currentSearchText)
 
             Category -> ProductsAboutInfoEntity(
                 Category,
                 categoriesMLE.value?.get(currentCategoryPosition)
             )
+
+            else -> {
+                ProductsAboutInfoEntity(Normal, null)
+            }
         }
         productsListUseCases.updateProductsList(
             productsListPage,
@@ -93,8 +104,7 @@ class ProductsListViewModel(application: Application) : AndroidViewModel(applica
     fun changeCategory(position: Int) {
         if (position == currentCategoryPosition) return
         currentCategoryPosition = position
-        productsListPage = 0
-        currentProductsShowType = if (position == 0) {
+        currentProductsShowTypeMLE.value = if (position == 0) {
             Normal
         } else {
             Category
@@ -106,8 +116,7 @@ class ProductsListViewModel(application: Application) : AndroidViewModel(applica
     fun onUpdatedSearchText(text: String) {
         if (currentSearchText == text) return
         currentSearchText = text
-        productsListPage = 0
-        currentProductsShowType = if (text.isBlank()) {
+        currentProductsShowTypeMLE.value = if (text.isBlank()) {
             Normal
         } else {
             Search

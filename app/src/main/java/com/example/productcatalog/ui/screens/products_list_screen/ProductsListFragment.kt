@@ -15,6 +15,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.productcatalog.R
 import com.example.productcatalog.databinding.FragmentProductsListBinding
+import com.example.productcatalog.domain.entities.ProductsShowType
+import com.example.productcatalog.domain.entities.ProductsShowType.Category
+import com.example.productcatalog.domain.entities.ProductsShowType.Normal
+import com.example.productcatalog.domain.entities.ProductsShowType.Search
 import com.example.productcatalog.ui.adpaters.ProductsListAdapter
 
 class ProductsListFragment : Fragment() {
@@ -43,18 +47,23 @@ class ProductsListFragment : Fragment() {
 
         initRecyclerView()
 
+        initListeners()
         initSearchListener()
+    }
+
+    private fun initListeners() {
+        binding.refreshButton.setOnClickListener {
+            productsNeedUpdate(needRestart = true)
+        }
     }
 
     private fun initSearchListener() {
         binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(p0: String?): Boolean {
-
                 return false
             }
 
             override fun onQueryTextChange(p0: String?): Boolean {
-                binding.spinnerCategories.isInvisible = p0?.isNotEmpty() == true
                 if (p0?.isEmpty() == true) binding.searchView.clearFocus()
                 if (p0 != null) viewModel.onUpdatedSearchText(p0)
                 return true
@@ -66,7 +75,7 @@ class ProductsListFragment : Fragment() {
         productsAdapter =
             ProductsListAdapter(appContext = requireActivity().applicationContext,
                 {
-                    productsOver()
+                    productsNeedUpdate(needRestart = false)
                 }, { position ->
                     navigateToDetailScreen(position)
                 })
@@ -83,8 +92,6 @@ class ProductsListFragment : Fragment() {
         binding.spinnerCategories.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
                 override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
-                    binding.searchView.isInvisible = p2 != 0
-
                     viewModel.changeCategory(p2)
                 }
 
@@ -109,8 +116,8 @@ class ProductsListFragment : Fragment() {
         )
     }
 
-    private fun productsOver() {
-        viewModel.getNewProducts(clearFlag = false)
+    private fun productsNeedUpdate(needRestart: Boolean = false) {
+        viewModel.getNewProducts(clearFlag = needRestart)
     }
 
     private fun initObservers() {
@@ -124,17 +131,41 @@ class ProductsListFragment : Fragment() {
         viewModel.showError.observe(viewLifecycleOwner) {
             showError(true)
         }
+        viewModel.currentProductsShowTypeMLE.observe(viewLifecycleOwner) {
+            updateProductsTypeState(it)
+        }
+    }
+
+    private fun updateProductsTypeState(productsShowType: ProductsShowType) {
+        when (productsShowType) {
+            Normal -> {
+                binding.searchView.isInvisible = false
+                binding.spinnerCategories.isInvisible = false
+            }
+
+            Search -> {
+                binding.searchView.isInvisible = false
+                binding.spinnerCategories.isInvisible = true
+            }
+
+            Category -> {
+                binding.searchView.isInvisible = true
+                binding.spinnerCategories.isInvisible = false
+            }
+        }
     }
 
     private fun showContent(flag: Boolean) {
         binding.progressBar.isVisible = !flag
-        binding.tvError.isVisible = !flag
+        binding.containerError.isVisible = !flag
+        binding.containerSearchAndFilter.isVisible = flag
         binding.rvProductsList.isVisible = flag
     }
 
     private fun showError(flag: Boolean) {
         binding.progressBar.isVisible = !flag
-        binding.tvError.isVisible = flag
+        binding.containerError.isVisible = flag
+        binding.containerSearchAndFilter.isVisible = !flag
         binding.rvProductsList.isVisible = !flag
     }
 }

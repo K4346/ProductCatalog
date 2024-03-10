@@ -35,12 +35,10 @@ class ProductsListAdapter(
 //            todo перенсти в функции
             ivPhoto.load(currentProduct.thumbnail) {
                 crossfade(true)
-//                placeholder(R.drawable.image)
                 transformations(RoundedCornersTransformation())
             }
             tvTitle.text = currentProduct.title
             tvDescription.text = currentProduct.description
-//            todo с валютой
             tvPrice.text =
                 appContext.getString(R.string.product_price, currentProduct.price.toString())
 
@@ -49,8 +47,6 @@ class ProductsListAdapter(
                 onProductClickListener.invoke(position)
             }
         }
-
-
 
         if (position == itemCount - 2) {
             productsOverListener.invoke()

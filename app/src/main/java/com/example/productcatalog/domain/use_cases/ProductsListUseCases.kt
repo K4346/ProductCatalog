@@ -92,7 +92,7 @@ class ProductsListUseCasesImpl : ProductsListUseCases {
             .observeOn(AndroidSchedulers.mainThread()).subscribe({
                 categoriesMLE.value = listOf(context.getString(R.string.filter)) + it
             }, {
-//                todo обработать
+                showError.call()
             })
         compositeDisposable.add(disposable)
     }
