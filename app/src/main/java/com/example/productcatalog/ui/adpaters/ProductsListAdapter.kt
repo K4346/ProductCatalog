@@ -3,6 +3,7 @@ package com.example.productcatalog.ui.adpaters
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.RoundedCornersTransformation
@@ -11,7 +12,6 @@ import com.example.productcatalog.databinding.ProductItemBinding
 import com.example.productcatalog.domain.entities.ProductInfoEntity
 
 class ProductsListAdapter(
-//    todo возможно засунуть слушатели в один класс
     private val appContext: Context,
     private val productsOverListener: () -> Unit,
     private val onProductClickListener: (position: Int) -> Unit
@@ -32,11 +32,9 @@ class ProductsListAdapter(
     override fun onBindViewHolder(holder: ProductsListViewHolder, position: Int) {
         val currentProduct = list[position]
         with(holder) {
-//            todo перенсти в функции
-            ivPhoto.load(currentProduct.thumbnail) {
-                crossfade(true)
-                transformations(RoundedCornersTransformation())
-            }
+
+            initProductPicture(ivPhoto, currentProduct.thumbnail)
+
             tvTitle.text = currentProduct.title
             tvDescription.text = currentProduct.description
             tvPrice.text =
@@ -54,6 +52,13 @@ class ProductsListAdapter(
     }
 
     override fun getItemCount(): Int = list.size
+
+    private fun initProductPicture(ivPhoto: ImageView, thumbnail: String) {
+        ivPhoto.load(thumbnail) {
+            crossfade(true)
+            transformations(RoundedCornersTransformation())
+        }
+    }
 
     inner class ProductsListViewHolder(itemView: ProductItemBinding) :
         RecyclerView.ViewHolder(itemView.root) {

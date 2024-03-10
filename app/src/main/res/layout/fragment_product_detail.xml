@@ -11,18 +11,6 @@
         android:gravity="center"
         android:orientation="vertical">
 
-
-        <TextView
-            android:id="@+id/tvTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:padding="10dp"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            tools:text="Title" />
-
-
         <androidx.viewpager2.widget.ViewPager2
             android:id="@+id/vpImages"
             android:layout_width="match_parent"
@@ -59,6 +47,15 @@
             android:textSize="16sp"
             tools:text="Description" />
 
+        <TextView
+            android:id="@+id/tvPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textSize="20sp"
+            android:textStyle="italic"
+            tools:text="Price" />
+
         <RatingBar
             android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
@@ -68,13 +65,5 @@
             android:numStars="5"
             android:stepSize="0.1" />
 
-
-        <TextView
-            android:id="@+id/tvPrice"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:textSize="20sp"
-            tools:text="Price" />
     </LinearLayout>
 </ScrollView>

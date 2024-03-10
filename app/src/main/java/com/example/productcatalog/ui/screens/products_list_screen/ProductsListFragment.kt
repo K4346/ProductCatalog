@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.productcatalog.MainActivity
 import com.example.productcatalog.R
 import com.example.productcatalog.databinding.FragmentProductsListBinding
 import com.example.productcatalog.domain.entities.ProductsShowType
@@ -43,12 +44,19 @@ class ProductsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initToolBar()
+
         initObservers()
 
         initRecyclerView()
 
         initListeners()
         initSearchListener()
+    }
+
+    private fun initToolBar() {
+        val title = getString(R.string.product_catalog)
+        (requireActivity() as MainActivity).initToolBar(title, false)
     }
 
     private fun initListeners() {

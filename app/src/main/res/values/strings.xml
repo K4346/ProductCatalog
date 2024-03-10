@@ -6,4 +6,6 @@
     <string name="refresh">Restart</string>
     <string name="category">Category: %1$s</string>
     <string name="brand">Brand:%1$s</string>
+    <string name="product">Product</string>
+    <string name="product_catalog">Product Catalog</string>
 </resources>
