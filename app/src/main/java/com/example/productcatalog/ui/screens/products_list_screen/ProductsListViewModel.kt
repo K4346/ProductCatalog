@@ -47,14 +47,7 @@ class ProductsListViewModel(private val application: Application) : AndroidViewM
 
         currentProductsShowTypeMLE.value = Normal
 
-        getNewProducts(false)
-        productsListUseCases.updateProductsList(
-            productsListPage,
-            true,
-            ProductsAboutInfoEntity(Normal, null)
-        )
-
-
+        getNewProducts(true)
     }
 
     fun getNewProducts(clearFlag: Boolean) {
@@ -97,7 +90,7 @@ class ProductsListViewModel(private val application: Application) : AndroidViewM
             PRODUCT_BUNDLE_BRAND_KEY to product.brand,
             PRODUCT_BUNDLE_CATEGORY_KEY to product.category,
             PRODUCT_BUNDLE_RATING_KEY to product.rating,
-            PRODUCT_BUNDLE_PRICE_KEY to product.price,
+            PRODUCT_BUNDLE_PRICE_KEY to product.price
         )
     }
 

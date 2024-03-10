@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.productcatalog.R
 import com.example.productcatalog.databinding.FragmentProductDetailBinding
 import com.example.productcatalog.ui.adpaters.ImagesSliderAdapter
 import com.example.productcatalog.ui.screens.products_list_screen.ProductsListViewModel
@@ -43,9 +44,18 @@ class ProductDetailFragment : Fragment() {
             tvTitle.text = bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_TITLE_KEY)
             tvDescription.text =
                 bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_DESCRIPTION_KEY)
-            tvBrand.text = bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_BRAND_KEY)
-            tvCategory.text = bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_CATEGORY_KEY)
-            tvPrice.text = bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_PRICE_KEY)
+            tvBrand.text = getString(
+                R.string.brand,
+                bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_BRAND_KEY)
+            )
+            tvCategory.text = getString(
+                R.string.category,
+                bundle.getString(ProductsListViewModel.PRODUCT_BUNDLE_CATEGORY_KEY)
+            )
+            tvPrice.text = getString(
+                R.string.product_price,
+                bundle.getInt(ProductsListViewModel.PRODUCT_BUNDLE_PRICE_KEY).toString()
+            )
             val rating = bundle.getDouble(ProductsListViewModel.PRODUCT_BUNDLE_RATING_KEY)
             Log.i("kpop", rating.toString())
             ratingBar.rating = rating.toFloat()

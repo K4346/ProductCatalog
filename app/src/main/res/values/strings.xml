@@ -4,4 +4,6 @@
     <string name="filter">Filter</string>
     <string name="connection_error">Connection error</string>
     <string name="refresh">Restart</string>
+    <string name="category">Category: %1$s</string>
+    <string name="brand">Brand:%1$s</string>
 </resources>
